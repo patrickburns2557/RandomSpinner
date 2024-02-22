@@ -21,21 +21,42 @@ import tkinter.ttk as ttk
 #     currentIndex %= len(choices)
 #     sleepTime += sleepIncrease
 
-#function to test changing the background of each choice as it's picked
-def pickChoice(numLoops):
+#tkinter friendly version of time.sleep, from here: https://stackoverflow.com/questions/10393886/tkinter-and-time-sleep/74162322#74162322
+def tksleep(self, time:float) -> None:
+    """
+    Emulating `time.sleep(seconds)`
+    Created by TheLizzard, inspired by Thingamabobs
+    """
+    self.after(int(time*1000), self.quit)
+    self.mainloop()
+tk.Misc.tksleep = tksleep
+
+
+#function to cycle through the choices
+def pickChoice(numWinners):
     global frameList
     global numChoices
-    if numLoops <= 0:
-        return
-    picked = random.randint(0, numChoices-1)
-    frameList[picked].configure(background="yellow")
-    window.after(100, lambda: pickChoice(numLoops=numLoops-1)) #have to use tk.after() instead of sleep because sleep will lockup the thread and won't show any visual updates until every loop is complete
+    previousChoice = 0
+    for i in range(numWinners):
+        # frameList[previousChoice].configure(background="white")
+        # picked = random.randint(0, numChoices-1)
+        # frameList[picked].configure(background="yellow")
+        # previousChoice = picked
+        # window.tksleep(0.5)
+        currentChoice = (i%(numChoices))
+        print(currentChoice)
+
+        frameList[previousChoice].configure(background="#F0F0F0")
+        frameList[currentChoice].configure(background="yellow")
+        previousChoice = currentChoice
+        window.tksleep(0.1)
+
 
 window = tk.Tk()
 window.title("Random")
 window.state("zoomed") #start maximized
 
-numChoices =120
+numChoices = 26
 
 frameList = []
 
@@ -57,7 +78,7 @@ for i in range(numChoices):
         currentColumn = 0
         currentRow += 1
 
-button = tk.Button(window, text="Pick", command=lambda: pickChoice(20))
+button = tk.Button(window, text="Pick", command=lambda: pickChoice(1000))
 button.grid(row=0, column=sizeOfGrid)
     
 window.mainloop()
