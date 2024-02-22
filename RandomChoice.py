@@ -21,13 +21,21 @@ import tkinter.ttk as ttk
 #     currentIndex %= len(choices)
 #     sleepTime += sleepIncrease
 
-
+#function to test changing the background of each choice as it's picked
+def pickChoice(numLoops):
+    global frameList
+    global numChoices
+    if numLoops <= 0:
+        return
+    picked = random.randint(0, numChoices-1)
+    frameList[picked].configure(background="yellow")
+    window.after(100, lambda: pickChoice(numLoops=numLoops-1)) #have to use tk.after() instead of sleep because sleep will lockup the thread and won't show any visual updates until every loop is complete
 
 window = tk.Tk()
 window.title("Random")
 window.state("zoomed") #start maximized
 
-numChoices = 112
+numChoices =120
 
 frameList = []
 
@@ -39,7 +47,8 @@ window.grid_columnconfigure(tuple(range(sizeOfGrid)), weight=1)
 
 #Create grid of choices
 for i in range(numChoices):
-    frameList.append(tk.Label(window, text="choice " + str(i), font=("Roboto", 15), background=random.choice(["red", "blue", "green"]))) #Create labels with random background colors to easily differentiate borders for now
+    #frameList.append(tk.Label(window, text="choice " + str(i), font=("Roboto", 15), background=random.choice(["red", "blue", "green"]))) #Create labels with random background colors to easily differentiate borders for now
+    frameList.append(tk.Label(window, text="choice " + str(i), font=("Roboto", 15)))
     frameList[i].grid(sticky="news", row=currentRow, column=currentColumn)
     currentColumn += 1 #increase column position for each choice
     
@@ -47,6 +56,9 @@ for i in range(numChoices):
     if currentColumn == sizeOfGrid:
         currentColumn = 0
         currentRow += 1
+
+button = tk.Button(window, text="Pick", command=lambda: pickChoice(20))
+button.grid(row=0, column=sizeOfGrid)
     
 window.mainloop()
-    
+
