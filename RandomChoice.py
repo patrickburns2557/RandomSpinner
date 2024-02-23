@@ -41,18 +41,21 @@ def pickChoice():
     previousChoice = 0
     sleepTime = 0.01
     numberLoops = (numChoices*2)+random.randint(1,numChoices)
+    
+    #Reset all choices back to default color, in case a roll was already done without restarting program
     for i in range(numChoices):
         frameList[i].configure(background="#F0F0F0")
 
+    #visually shuffle through the choices randomly, instead of being like a "spin" in order
     shuffledList = []
-
     for i in range(numberLoops):
         index = i % numChoices
         shuffledList.append(index)
     random.shuffle(shuffledList)
     
+
     for i in shuffledList:
-            frameList[previousChoice].configure(background="#F0F0F0")
+            frameList[previousChoice].configure(background="#F0F0F0") #only highlight one choice at a time while program is picking
             frameList[i].configure(background="yellow")
             previousChoice = i
             window.tksleep(sleepTime)
