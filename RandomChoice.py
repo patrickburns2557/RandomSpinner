@@ -33,23 +33,46 @@ tk.Misc.tksleep = tksleep
 
 
 #function to cycle through the choices
-def pickChoice(numWinners):
+def pickChoice():
     global frameList
     global numChoices
+    global sleepTime
+    global sleepIncrease
     previousChoice = 0
-    for i in range(numWinners):
-        # frameList[previousChoice].configure(background="white")
-        # picked = random.randint(0, numChoices-1)
-        # frameList[picked].configure(background="yellow")
-        # previousChoice = picked
-        # window.tksleep(0.5)
-        currentChoice = (i%(numChoices))
-        print(currentChoice)
+    sleepTime = 0.01
+    numberLoops = (numChoices*2)+random.randint(1,numChoices)
+    for i in range(numChoices):
+        frameList[i].configure(background="#F0F0F0")
 
-        frameList[previousChoice].configure(background="#F0F0F0")
-        frameList[currentChoice].configure(background="yellow")
-        previousChoice = currentChoice
-        window.tksleep(0.1)
+    shuffledList = []
+
+    for i in range(numberLoops):
+        index = i % numChoices
+        shuffledList.append(index)
+    random.shuffle(shuffledList)
+    
+    for i in shuffledList:
+            frameList[previousChoice].configure(background="#F0F0F0")
+            frameList[i].configure(background="yellow")
+            previousChoice = i
+            window.tksleep(sleepTime)
+            sleepTime += sleepIncrease
+    
+    # for i in range(numberLoops):
+    #     # frameList[previousChoice].configure(background="white")
+    #     # picked = random.randint(0, numChoices-1)
+    #     # frameList[picked].configure(background="yellow")
+    #     # previousChoice = picked
+    #     # window.tksleep(0.5)
+    #     currentChoice = (i%(numChoices))
+    #     print(currentChoice)
+
+    #     frameList[previousChoice].configure(background="#F0F0F0")
+    #     frameList[currentChoice].configure(background="yellow")
+    #     previousChoice = currentChoice
+    #     window.tksleep(sleepTime)
+    #     sleepTime += sleepIncrease
+    
 
 
 window = tk.Tk()
@@ -57,6 +80,11 @@ window.title("Random")
 window.state("zoomed") #start maximized
 
 numChoices = 26
+
+sleepTime = 0.01
+sleepIncrease = (1.55/numChoices)**2 #Increase sleep time between each iteration, to have it slow down as it reaches the final choice
+
+
 
 frameList = []
 
@@ -78,7 +106,7 @@ for i in range(numChoices):
         currentColumn = 0
         currentRow += 1
 
-button = tk.Button(window, text="Pick", command=lambda: pickChoice(1000))
+button = tk.Button(window, text="Pick", command=lambda: pickChoice())
 button.grid(row=0, column=sizeOfGrid)
     
 window.mainloop()
