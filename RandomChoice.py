@@ -1,4 +1,3 @@
-import time
 import random
 from math import ceil, sqrt
 import tkinter as tk
@@ -42,7 +41,6 @@ def pickChoice():
         index = i % numChoices
         shuffledList.append(index)
     random.shuffle(shuffledList)
-    
 
     for i in shuffledList:
             frameList[previousChoice].configure(background=OG_BACKGROUND) #reset previous choice to only highlight one choice at a time while program is picking
@@ -52,13 +50,14 @@ def pickChoice():
             sleepTime += sleepIncrease
 
 def readListFromFile():
-     global choices
-
-     with open(FILENAME, "r") as file:
+    readList = []
+    with open(FILENAME, "r") as file:
           line = file.readline()
           while line != "":
-               choices.append(line.strip())
+               readList.append(line.strip())
                line = file.readline()
+    return readList
+
                
 
 
@@ -68,15 +67,10 @@ window.state("zoomed") #start maximized
 window.grid_rowconfigure(0, weight=1)
 window.grid_columnconfigure(1, weight=1)
 
-numChoices = 26
-
+choices = readListFromFile()
+numChoices = len(choices)
 sleepTime = 0.01
 sleepIncrease = (1.55/numChoices)**2 #Increase sleep time between each iteration, to have it slow down as it reaches the final choice
-
-
-
-frameList = []
-
 sizeOfGrid = ceil(sqrt(numChoices)) #width and height of grid will be the sqrt of the number of choices, rounded up
 currentRow = 0
 currentColumn = 0
@@ -88,10 +82,11 @@ choicesFrame.grid_rowconfigure(tuple(range(sizeOfGrid)), weight=1) #set all grid
 choicesFrame.grid_columnconfigure(tuple(range(sizeOfGrid)), weight=1)
 choicesFrame.grid(row=0, column=1, sticky="news", padx=50, pady=30)
 
+frameList = []
 #Create grid of choices
 for i in range(numChoices):
     #frameList.append(tk.Label(window, text="choice " + str(i), font=("Roboto", 15), background=random.choice(["red", "blue", "green"]))) #Create labels with random background colors to easily differentiate borders for now
-    frameList.append(tk.Label(choicesFrame, text="choice " + str(i), font=("Roboto", 15), relief=tk.GROOVE, borderwidth=3))
+    frameList.append(tk.Label(choicesFrame, text=choices[i], font=("Roboto", 15), relief=tk.GROOVE, borderwidth=3))
     frameList[i].grid(sticky="news", row=currentRow, column=currentColumn, padx=5, pady=5)
     currentColumn += 1 #increase column position for each choice
     
@@ -100,12 +95,8 @@ for i in range(numChoices):
         currentColumn = 0
         currentRow += 1
 
-button = tk.Button(window, text="Pick", width=20, relief=tk.GROOVE, borderwidth=5, command=lambda: pickChoice())
+button = tk.Button(window, text="Pick", font=("Roboto", 20), width=10, relief=tk.GROOVE, borderwidth=5, command=lambda: pickChoice())
 button.grid(row=0, column=0, sticky="ns", padx=30, pady=50)
-
-
-readListFromFile()
-print(choices)
 
 
 window.mainloop()
