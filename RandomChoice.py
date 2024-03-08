@@ -6,6 +6,8 @@ import tkinter.ttk as ttk
 
 OG_BACKGROUND = "#F0F0F0"
 PICKED_BACKGROUND = "yellow"
+FILENAME = "input.txt"
+choices = []
 
 
 #tkinter friendly version of time.sleep, from here: https://stackoverflow.com/questions/10393886/tkinter-and-time-sleep/74162322#74162322
@@ -33,7 +35,8 @@ def pickChoice():
     for i in range(numChoices):
         frameList[i].configure(background=OG_BACKGROUND)
 
-    #shuffle a list twice as long as the number of choices and iterate through it to visually shuffle through the choices
+    #Shuffle a list twice as long as the number of choices and iterate through it to visually shuffle through the choices.
+    #The last entry in the shuffled list will be the winner
     shuffledList = []
     for i in range(numChoices*2):
         index = i % numChoices
@@ -47,7 +50,16 @@ def pickChoice():
             previousChoice = i
             window.tksleep(sleepTime)
             sleepTime += sleepIncrease
-    
+
+def readListFromFile():
+     global choices
+
+     with open(FILENAME, "r") as file:
+          line = file.readline()
+          while line != "":
+               choices.append(line.strip())
+               line = file.readline()
+               
 
 
 window = tk.Tk()
@@ -75,6 +87,7 @@ choicesFrame = tk.LabelFrame(window, text="Choices", font=("Roboto", 12),relief=
 choicesFrame.grid_rowconfigure(tuple(range(sizeOfGrid)), weight=1) #set all grid rows and columns to fill the max amount of space
 choicesFrame.grid_columnconfigure(tuple(range(sizeOfGrid)), weight=1)
 choicesFrame.grid(row=0, column=1, sticky="news", padx=50, pady=30)
+
 #Create grid of choices
 for i in range(numChoices):
     #frameList.append(tk.Label(window, text="choice " + str(i), font=("Roboto", 15), background=random.choice(["red", "blue", "green"]))) #Create labels with random background colors to easily differentiate borders for now
@@ -89,6 +102,11 @@ for i in range(numChoices):
 
 button = tk.Button(window, text="Pick", width=20, relief=tk.GROOVE, borderwidth=5, command=lambda: pickChoice())
 button.grid(row=0, column=0, sticky="ns", padx=30, pady=50)
-    
+
+
+readListFromFile()
+print(choices)
+
+
 window.mainloop()
 
